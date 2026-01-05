@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CF0608D3C6B54BEF8003EF6F /* ByeFiCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1B9EBBD91FF84E3BA591CA96 /* ByeFiCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		26F3B31B2F0C517000DF9417 /* ByeFi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ByeFi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B1EECC365EE4845BB213C3C /* ByeFiCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ByeFiCore; path = Packages/ByeFiCore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF0608D3C6B54BEF8003EF6F /* ByeFiCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,8 +39,17 @@
 			isa = PBXGroup;
 			children = (
 				26F3B31D2F0C517000DF9417 /* ByeFi */,
+				0B6D6945D31A425E9B6B9905 /* Packages */,
 				26F3B31C2F0C517000DF9417 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		0B6D6945D31A425E9B6B9905 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				7B1EECC365EE4845BB213C3C /* ByeFiCore */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		26F3B31C2F0C517000DF9417 /* Products */ = {
@@ -65,6 +80,7 @@
 			);
 			name = ByeFi;
 			packageProductDependencies = (
+				1B9EBBD91FF84E3BA591CA96 /* ByeFiCore */,
 			);
 			productName = ByeFi;
 			productReference = 26F3B31B2F0C517000DF9417 /* ByeFi.app */;
@@ -94,6 +110,9 @@
 			);
 			mainGroup = 26F3B3122F0C517000DF9417;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DF20460B69C748F4B102B06B /* XCLocalSwiftPackageReference "Packages/ByeFiCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 26F3B31C2F0C517000DF9417 /* Products */;
 			projectDirPath = "";
@@ -331,6 +350,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		DF20460B69C748F4B102B06B /* XCLocalSwiftPackageReference "Packages/ByeFiCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ByeFiCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1B9EBBD91FF84E3BA591CA96 /* ByeFiCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF20460B69C748F4B102B06B /* XCLocalSwiftPackageReference "Packages/ByeFiCore" */;
+			productName = ByeFiCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 26F3B3132F0C517000DF9417 /* Project object */;
 }

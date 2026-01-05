@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  ByeFi
+//  ByeFiCore
 //
 //  Created by Shayne Sweeney on 1/5/26.
 //
