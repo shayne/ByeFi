@@ -10,6 +10,7 @@ import Defaults
 extension Defaults.Keys {
     static let lidControlEnabled = Key<Bool>("lidControlEnabled", default: true)
     static let ignoreWhenOnACPower = Key<Bool>("ignoreWhenOnACPower", default: true)
+    static let reactToPowerChangesWhileClosed = Key<Bool>("reactToPowerChangesWhileClosed", default: true)
     static let hideMenuBar = Key<Bool>("hideMenuBar", default: false)
     static let launchAtLogin = Key<Bool>("launchAtLogin", default: false)
     static let launchAtLoginConfigured = Key<Bool>("launchAtLoginConfigured", default: false)

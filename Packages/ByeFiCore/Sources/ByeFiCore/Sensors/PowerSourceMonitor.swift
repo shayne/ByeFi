@@ -27,3 +27,31 @@ enum PowerSourceMonitor {
         return true
     }
 }
+
+final class PowerSourceObserver {
+    private var runLoopSource: CFRunLoopSource?
+    private let handler: () -> Void
+
+    init(handler: @escaping () -> Void) {
+        self.handler = handler
+    }
+
+    func start() {
+        guard runLoopSource == nil else { return }
+        let source = IOPSNotificationCreateRunLoopSource({ context in
+            guard let context else { return }
+            let observer = Unmanaged<PowerSourceObserver>.fromOpaque(context).takeUnretainedValue()
+            observer.handler()
+        }, Unmanaged.passUnretained(self).toOpaque())
+        guard let source else { return }
+        let runLoopSource = source.takeRetainedValue()
+        self.runLoopSource = runLoopSource
+        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .defaultMode)
+    }
+
+    deinit {
+        if let runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .defaultMode)
+        }
+    }
+}

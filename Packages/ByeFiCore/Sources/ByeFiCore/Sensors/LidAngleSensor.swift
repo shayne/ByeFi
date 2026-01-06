@@ -152,19 +152,29 @@ final class LidAngleMonitor: ObservableObject {
 
     private let sensor = LidAngleSensor()
     private let wifiController = WiFiController()
+    private lazy var powerObserver = PowerSourceObserver { [weak self] in
+        DispatchQueue.main.async {
+            self?.handlePowerChange()
+        }
+    }
     private var task: Task<Void, Never>?
     private let logger = Logger(subsystem: "ByeFi", category: "LidAngle")
     private let pollInterval = Duration.seconds(1)
     private let lidClosedThreshold = 359.0
     private let lidClosedNearZeroThreshold = 1.0
     private var wasClosed: Bool?
+    private var isOnACPower = PowerSourceMonitor.isOnACPower()
+    private var settingsObservations: [Defaults.Observation] = []
 
     init() {
+        powerObserver.start()
+        observeSettings()
         start()
     }
 
     deinit {
         task?.cancel()
+        settingsObservations.forEach { $0.invalidate() }
     }
 
     func start() {
@@ -181,31 +191,64 @@ final class LidAngleMonitor: ObservableObject {
         let newAngle = sensor.lidAngle()
         angle = newAngle
 
-        if let newAngle {
-            let isClosed = newAngle >= lidClosedThreshold || newAngle <= lidClosedNearZeroThreshold
-            if shouldControlWiFi() {
-                if isClosed, wasClosed != true {
-                    logger.info("lid closed")
-                    wifiController.handleLidClosed()
-                } else if !isClosed, wasClosed == true {
-                    logger.info("lid opened")
-                    wifiController.handleLidOpened()
-                }
+        guard let newAngle else { return }
+
+        let isClosed = newAngle >= lidClosedThreshold || newAngle <= lidClosedNearZeroThreshold
+        let previous = wasClosed
+        wasClosed = isClosed
+
+        if previous == nil || previous != isClosed {
+            if isClosed {
+                logger.info("lid closed")
+            } else {
+                logger.info("lid opened")
             }
-            wasClosed = isClosed
+            reconcile(trigger: .lidChange)
         }
     }
 
-    private func shouldControlWiFi() -> Bool {
-        guard Defaults[.lidControlEnabled] else {
-            return false
-        }
+    private func handlePowerChange() {
+        let newPowerState = PowerSourceMonitor.isOnACPower()
+        guard newPowerState != isOnACPower else { return }
+        isOnACPower = newPowerState
+        reconcile(trigger: .powerChange)
+    }
 
-        if Defaults[.ignoreWhenOnACPower] {
-            return !PowerSourceMonitor.isOnACPower()
-        }
+    private func observeSettings() {
+        settingsObservations = [
+            Defaults.observe(.lidControlEnabled) { [weak self] _ in
+                self?.reconcile(trigger: .settingsChange)
+            },
+            Defaults.observe(.ignoreWhenOnACPower) { [weak self] _ in
+                self?.reconcile(trigger: .settingsChange)
+            },
+            Defaults.observe(.reactToPowerChangesWhileClosed) { [weak self] _ in
+                self?.reconcile(trigger: .settingsChange)
+            },
+        ]
+    }
 
-        return true
+    private func reconcile(trigger: LidWiFiReconciler.Trigger) {
+        let settings = LidWiFiReconciler.Settings(
+            enabled: Defaults[.lidControlEnabled],
+            ignoreWhenOnACPower: Defaults[.ignoreWhenOnACPower],
+            reactToPowerChangesWhileClosed: Defaults[.reactToPowerChangesWhileClosed]
+        )
+        let action = LidWiFiReconciler.action(
+            trigger: trigger,
+            lidClosed: wasClosed,
+            isOnACPower: isOnACPower,
+            settings: settings
+        )
+
+        switch action {
+        case .none:
+            break
+        case .forceOff:
+            wifiController.ensureWiFiOff()
+        case .restore(let clearSavedState):
+            wifiController.restoreWiFi(clearSavedState: clearSavedState)
+        }
     }
 }
 
@@ -213,24 +256,25 @@ final class WiFiController {
     private let logger = Logger(subsystem: "ByeFi", category: "WiFi")
     private var lastKnownPowerState: Bool?
 
-    func handleLidClosed() {
-        guard let currentPower = currentPowerState() else {
-            return
+    func ensureWiFiOff() {
+        guard let currentPower = currentPowerState() else { return }
+        if lastKnownPowerState == nil {
+            lastKnownPowerState = currentPower
         }
-
-        lastKnownPowerState = currentPower
         if currentPower {
             setPower(false)
         }
     }
 
-    func handleLidOpened() {
+    func restoreWiFi(clearSavedState: Bool) {
         guard let previousPower = lastKnownPowerState else {
             return
         }
 
         setPower(previousPower)
-        lastKnownPowerState = nil
+        if clearSavedState {
+            lastKnownPowerState = nil
+        }
     }
 
     private func setPower(_ enabled: Bool) {

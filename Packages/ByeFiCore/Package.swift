@@ -22,5 +22,10 @@ let package = Package(
                 .linkedFramework("ServiceManagement"),
             ]
         ),
+        .testTarget(
+            name: "ByeFiCoreTests",
+            dependencies: ["ByeFiCore"],
+            path: "Tests/ByeFiCoreTests"
+        ),
     ]
 )

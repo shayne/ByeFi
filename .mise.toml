@@ -4,7 +4,7 @@ run = "xcodebuild -project ByeFi.xcodeproj -scheme ByeFi -destination 'platform=
 
 [tasks.test]
 description = "Run ByeFi tests (macOS)"
-run = "xcodebuild -project ByeFi.xcodeproj -scheme ByeFi -destination 'platform=macOS' test"
+run = "swift test --package-path Packages/ByeFiCore"
 
 [tasks.clean]
 description = "Clean ByeFi build artifacts"

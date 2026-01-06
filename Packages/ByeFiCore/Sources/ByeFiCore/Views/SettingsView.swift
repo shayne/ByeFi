@@ -12,6 +12,7 @@ import AppKit
 struct SettingsView: View {
     @Default(.lidControlEnabled) private var lidControlEnabled
     @Default(.ignoreWhenOnACPower) private var ignoreWhenOnACPower
+    @Default(.reactToPowerChangesWhileClosed) private var reactToPowerChangesWhileClosed
     @Default(.hideMenuBar) private var hideMenuBar
     @Default(.launchAtLogin) private var launchAtLogin
 
@@ -36,6 +37,12 @@ struct SettingsView: View {
                         subtitle: "Only react when running on battery.",
                         systemImage: "battery.100.bolt",
                         isOn: $ignoreWhenOnACPower
+                    )
+                    SettingsToggleRow(
+                        title: "React to power changes while closed",
+                        subtitle: "Restore or disable Wi-Fi if power changes while closed.",
+                        systemImage: "bolt.circle",
+                        isOn: $reactToPowerChangesWhileClosed
                     )
                 }
                 SettingsCard(title: "App", subtitle: "Startup and visibility options.") {
@@ -71,8 +78,7 @@ struct SettingsView: View {
             }
             .padding(24)
         }
-        .frame(minWidth: 520, minHeight: 420)
-        .fixedSize(horizontal: false, vertical: true)
+        .frame(minWidth: 520, idealWidth: 560, minHeight: 520, idealHeight: 620)
         .onAppear {
             launchAtLogin = LaunchAtLoginManager.isEnabled
         }

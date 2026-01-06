@@ -15,6 +15,6 @@ public enum ByeFiAppRoot {
             SettingsView()
         }
         .windowResizability(.contentSize)
-        .defaultSize(width: 540, height: 520)
+        .defaultSize(width: 560, height: 640)
     }
 }
