@@ -46,6 +46,13 @@ final class MenuBarController: NSObject {
         let projectItem = NSMenuItem(title: "Project Site", action: #selector(openProjectSite), keyEquivalent: "")
         projectItem.target = self
         menu.addItem(projectItem)
+
+        menu.addItem(.separator())
+
+        let quitItem = NSMenuItem(title: "Quit ByeFi", action: #selector(quitApp), keyEquivalent: "q")
+        quitItem.keyEquivalentModifierMask = [.command]
+        quitItem.target = self
+        menu.addItem(quitItem)
     }
 
     private func ensureStatusItem() {
@@ -89,6 +96,10 @@ final class MenuBarController: NSObject {
 
     @objc private func openProjectSite() {
         NSWorkspace.shared.open(AppLinks.projectURL)
+    }
+
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
     }
 
     @objc private func handleStatusItemClick(_ sender: Any?) {
