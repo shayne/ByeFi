@@ -9,5 +9,4 @@ import Foundation
 
 enum AppLinks {
     static let projectURL = URL(string: "https://github.com/shayne/ByeFi")!
-    static let downloadURL = URL(string: "https://example.com/byefi-latest")!
 }
