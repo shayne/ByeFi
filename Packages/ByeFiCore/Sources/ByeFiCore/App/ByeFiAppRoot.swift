@@ -11,8 +11,10 @@ public enum ByeFiAppRoot {
     @MainActor
     public static func makeScene(appDelegate: AppDelegate) -> some Scene {
         _ = appDelegate
-        return WindowGroup {
-            ContentView()
+        return Settings {
+            SettingsView()
         }
+        .windowResizability(.contentSize)
+        .defaultSize(width: 540, height: 520)
     }
 }

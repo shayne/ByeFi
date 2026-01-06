@@ -7,10 +7,20 @@ let package = Package(
     products: [
         .library(name: "ByeFiCore", targets: ["ByeFiCore"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/sindresorhus/Defaults", from: "9.0.6"),
+    ],
     targets: [
         .target(
             name: "ByeFiCore",
-            path: "Sources/ByeFiCore"
+            dependencies: [
+                .product(name: "Defaults", package: "Defaults"),
+            ],
+            path: "Sources/ByeFiCore",
+            linkerSettings: [
+                .linkedFramework("CoreWLAN"),
+                .linkedFramework("ServiceManagement"),
+            ]
         ),
     ]
 )

@@ -1,0 +1,20 @@
+[tasks.build]
+description = "Build ByeFi (macOS)"
+run = "xcodebuild -project ByeFi.xcodeproj -scheme ByeFi -destination 'platform=macOS' build"
+
+[tasks.test]
+description = "Run ByeFi tests (macOS)"
+run = "xcodebuild -project ByeFi.xcodeproj -scheme ByeFi -destination 'platform=macOS' test"
+
+[tasks.clean]
+description = "Clean ByeFi build artifacts"
+run = "xcodebuild -project ByeFi.xcodeproj -scheme ByeFi clean"
+
+[tasks.archive]
+description = "Archive ByeFi and extract a .app into build/ByeFi.app"
+run = [
+  "mkdir -p build",
+  "xcodebuild -project ByeFi.xcodeproj -scheme ByeFi -destination 'platform=macOS' archive -archivePath build/ByeFi.xcarchive",
+  "rm -rf build/ByeFi.app",
+  "cp -R build/ByeFi.xcarchive/Products/Applications/ByeFi.app build/ByeFi.app"
+]
